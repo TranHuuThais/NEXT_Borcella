@@ -48,7 +48,6 @@ export const POST = async (req: NextRequest) => {
     });
 
     await newProduct.save();
-
     if (collections) {
       for (const collectionId of collections) {
         const collection = await Collection.findById(collectionId);
@@ -80,6 +79,3 @@ export const GET = async (req: NextRequest) => {
     return new NextResponse("Internal Error", { status: 500 });
   }
 };
-
-export const dynamic = "force-dynamic";
-

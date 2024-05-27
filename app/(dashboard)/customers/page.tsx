@@ -1,5 +1,5 @@
 import { DataTable } from '@/components/custom ui/DataTable'
-import { columns } from '@/components/customers/CustomerColumns'
+import { columns } from '@/components/customers/customerColumns'
 import { Separator } from '@/components/ui/separator'
 import Customer from '@/lib/models/Customer'
 import { connectToDB } from '@/lib/mongoDB'

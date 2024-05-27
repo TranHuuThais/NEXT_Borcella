@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/custom ui/DataTable";
 import { columns } from "@/components/products/ProductColumns";
 
+
 const Products = () => {
   const router = useRouter();
 

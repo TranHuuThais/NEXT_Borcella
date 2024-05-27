@@ -1,5 +1,7 @@
 "use client"
 
+
+
 import { DataTable } from "@/components/custom ui/DataTable"
 import Loader from "@/components/custom ui/Loader"
 import { columns } from "@/components/orders/OrderColumns"
@@ -24,7 +26,7 @@ const Orders = () => {
 
   useEffect(() => {
     getOrders()
-  }, [])
+  }, [])    
 
   return loading ? <Loader /> : (
     <div className="px-10 py-5">
@@ -35,6 +37,6 @@ const Orders = () => {
   )
 }
 
-export const dynamic = "force-dynamic";
+
 
 export default Orders

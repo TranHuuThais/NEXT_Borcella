@@ -2,6 +2,78 @@ import Customer from "../models/Customer";
 import Order from "../models/Order";
 import { connectToDB } from "../mongoDB"
 
+export const getCollections = async () => {
+  const collections = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/collectionHome`)
+  return await collections.json()
+}
+
+export const getCollectionDetails = async (collectionId: string) => {
+  const collection = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/collectionHome/${collectionId}`);
+  const data = await collection.json();
+  return data;  // Ensure this data includes the 'image' property
+};
+
+
+export const getProducts = async () => {
+  const products = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/productHome`)
+  return await products.json()
+}
+    
+export const getProductDetails = async (productId: string) => {
+  const product = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/productHome/${productId}`)
+  return await product.json()
+}
+
+
+
+
+export const getSearchedProducts = async (query: string) => {
+  const searchedProducts = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search/${query}`)
+  return await searchedProducts.json()
+}
+
+export const getOrders = async (customerId: string) => {
+  try {
+    const ordersResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orderHome/customers/${customerId}`);
+
+    if (!ordersResponse.ok) {
+      throw new Error(`Failed to fetch orders: ${ordersResponse.status} ${ordersResponse.statusText}`);
+    }
+
+    const ordersData = await ordersResponse.json(); 
+    return ordersData;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    throw error; // Rethrow the error to propagate it to the caller
+  }
+};
+
+
+
+export const getRelatedProducts = async (productId: string) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/productHome/${productId}/related`);
+    
+    // Check if the response is OK (status code 200-299)
+    if (!response.ok) {
+      throw new Error(`Error fetching related products: ${response.status} ${response.statusText}`);
+    }
+
+    // Attempt to parse the response as JSON
+    const relatedProducts = await response.json();
+    return relatedProducts;
+  } catch (error) {
+    // Log the error to the console (or handle it in an appropriate way)
+    console.error('Failed to fetch related products:', error);
+    return null; // or handle the error appropriately
+  }
+};
+
+
+
+
+
+
 export const getTotalSales = async () => {
   await connectToDB();
   const orders = await Order.find()

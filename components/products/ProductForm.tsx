@@ -1,29 +1,27 @@
 "use client";
-
+import { z } from "zod";
+import { Separator } from "../ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-
-import { Separator } from "../ui/separator";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
-import ImageUpload from "../custom ui/ImageUpload";
-import { useEffect, useState } from "react";
+import ImageUpload from "../custom ui/imageUpload";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Delete from "../custom ui/Delete";
 import MultiText from "../custom ui/MultiText";
 import MultiSelect from "../custom ui/MultiSelect";
-import Loader from "../custom ui/Loader";
 
 const formSchema = z.object({
   title: z.string().min(2).max(20),
@@ -37,15 +35,14 @@ const formSchema = z.object({
   price: z.coerce.number().min(0.1),
   expense: z.coerce.number().min(0.1),
 });
-
-interface ProductFormProps {
-  initialData?: ProductType | null; //Must have "?" to make it optional
+interface ProductFromProps {
+  initialData?: ProductType | null;
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
+const ProductForm: React.FC<ProductFromProps> = ({ initialData }) => {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [collections, setCollections] = useState<CollectionType[]>([]);
 
   const getCollections = async () => {
@@ -61,7 +58,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
       toast.error("Something went wrong! Please try again.");
     }
   };
-
   useEffect(() => {
     getCollections();
   }, []);
@@ -69,12 +65,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData
-      ? {
-          ...initialData,
-          collections: initialData.collections.map(
-            (collection) => collection._id
-          ),
-        }
+    ? {
+        ...initialData,
+        collections: initialData.collections.map(
+          (collection) => collection._id
+        ),
+      }
       : {
           title: "",
           description: "",
@@ -111,29 +107,27 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
       });
       if (res.ok) {
         setLoading(false);
-        toast.success(`Product ${initialData ? "updated" : "created"}`);
+        toast.success(`Products ${initialData ? "updated" : "created"}`);
         window.location.href = "/products";
         router.push("/products");
       }
     } catch (err) {
-      console.log("[products_POST]", err);
+      console.error("[products_POST]", err);
       toast.error("Something went wrong! Please try again.");
     }
   };
 
-  return loading ? (
-    <Loader />
-  ) : (
+  return (
     <div className="p-10">
       {initialData ? (
         <div className="flex items-center justify-between">
-          <p className="text-heading2-bold">Edit Product</p>
-          <Delete id={initialData._id} item="product" />
+          <p className="text-heading2-bold">Edit Products</p>
+          <Delete id={initialData._id} item="collection" />
         </div>
       ) : (
-        <p className="text-heading2-bold">Create Product</p>
+        <p className="text-heading2-bold">Create Products</p>
       )}
-      <Separator className="bg-grey-1 mt-4 mb-7" />
+      <Separator className=" bg-grey-1 mt-4 mb-7" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -144,12 +138,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 <FormLabel>Title</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Title"
+                    placeholder="title"
                     {...field}
                     onKeyDown={handleKeyPress}
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -161,13 +155,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Description"
+                    placeholder="description"
                     {...field}
                     rows={5}
                     onKeyDown={handleKeyPress}
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -192,23 +186,22 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
               </FormItem>
             )}
           />
-
           <div className="md:grid md:grid-cols-3 gap-8">
             <FormField
               control={form.control}
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price ($)</FormLabel>
+                  <FormLabel>Price($)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="Price"
+                      placeholder="price"
                       {...field}
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -217,16 +210,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
               name="expense"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Expense ($)</FormLabel>
+                  <FormLabel>Expense($)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="Expense"
+                      placeholder="expense"
                       {...field}
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -238,12 +231,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                   <FormLabel>Category</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Category"
+                      placeholder="category"
                       {...field}
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -265,7 +258,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       }
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -324,7 +317,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
-            <FormField
+               <FormField
               control={form.control}
               name="sizes"
               render={({ field }) => (
@@ -351,15 +344,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
               )}
             />
           </div>
-
           <div className="flex gap-10">
-            <Button type="submit" className="bg-blue-1 text-white">
+            <Button
+              type="submit"
+              className="bg-blue-1 text-white"
+              disabled={loading}
+            >
               Submit
             </Button>
             <Button
               type="button"
               onClick={() => router.push("/products")}
               className="bg-blue-1 text-white"
+              disabled={loading}
             >
               Discard
             </Button>

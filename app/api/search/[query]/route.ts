@@ -21,4 +21,4 @@ export const GET = async (req: NextRequest, { params }: { params: { query: strin
   }
 }
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"; 
